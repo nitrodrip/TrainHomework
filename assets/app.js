@@ -16,22 +16,40 @@ var arrivalUrl = "https://api.railwayapi.com/v2/arrivals/station/cdg/hours/2/api
 console.log (datebase);
 
 	// On Click for sumbmit button with prevent to stop reloading
-	$("#add-train-btn").on('click', function(event){
-	event.preventDefault();
-	//console.log("working");
+		$("#add-train-btn").on('click', function(event){
+		event.preventDefault();
 
   	// On click event Button for adding trains
-	$("#add-train-btn").on("click", function() 
-						   
+	$("#add-train-btn").on("click", function()
+		event.preventDefault();
+      	var trainName = $("#TrainName_html").val().trim();
+      	var scheduledDepart = $("#Number_html").val().trim();
+      	var actualDepart = moment($('#TrainTime_html').val().trim(), "HH:mm").format("HH:mm");
+
+      $('#TrainName_html').val("");
+      $('#Number_html').val("");
+		
+	// Creates local object for holding train data
+  		var newTrain = {
+    	name: trainName,
+		schdep: scheduledDepart,
+		actdep: actualDepart,
+ 
+		//pushes info to database 
+		dataRef.ref().push(newTrain); 
+			
+		// Grab snapshot of fields
+		dataRef.ref().on("child_added", function(childSnapshot){
+		$("#contentBucket").html("");
+			var trainName = childSnapshot.val().name;
+			var scheduledDepart = childSnapshot.val().schdep;
+			var actualDepart = childSnapshot.val().actdep;
+
 	// Grabs user input from forms
   	var numberInput = $("#number-input").val().trim();
 	var trainName = $("#train-name-input").val().trim();
 
- 	// Creates local "temporary" object for holding train data
-  	var newTrain = {
-    name: trainName,
-	schdep: scheduledDepart,
-	actdep: actualDepart,
+ 	
   };
 
 	// Load JSON values
